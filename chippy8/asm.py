@@ -88,15 +88,20 @@ def disassemble(file_in, file_out):
                         break
                 k += 2
 
+def print_help(argv):
+    print('Usage:\n\t%s -a file_in.c8 file_out\t# Assemble' % argv[0])
+    print('\t%s -d file_in file_out.c8\t# Disassemble' % argv[0])
+
 def main():
     if len(sys.argv) <= 3:
-        print('Usage:\n\t%s -a file_in.c8 file_out\t#Assemble\n' % sys.argv[0])
-        print('\t%s -d file_in file_out.c8\t#Disassemble' % sys.argv[0])
+        print_help(sys.argv)
         return 1
     if sys.argv[1] == '-d':
         disassemble(sys.argv[2], sys.argv[3])
     elif sys.argv[1] == '-a':
         assemble(sys.argv[2], sys.argv[3])
+    else:
+        print_help(sys.argv)
 
 if __name__ == "__main__":
     sys.exit(main())
