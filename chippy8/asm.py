@@ -24,6 +24,7 @@ INSTRUCTIONS_TABLE = {
     Instruction('0x00E0', 'CLS'),
     Instruction('0x00EE', 'RET'),
     Instruction('0x0{a}{b}{c}', 'SYS 0x{a}{b}{c}'),
+
     Instruction('0x1{a}{b}{c}', 'JP 0x{a}{b}{c}'),
     Instruction('0x2{a}{b}{c}', 'CALL 0x{a}{b}{c}'),
     Instruction('0x3{a}{b}{c}', 'SE V{a}, 0x{b}{c}'),
@@ -31,22 +32,26 @@ INSTRUCTIONS_TABLE = {
     Instruction('0x5{a}{b}0', 'SE V{a}, V{b}'),
     Instruction('0x6{a}{b}{c}', 'LD V{a}, 0x{b}{c}'),
     Instruction('0x7{a}{b}{c}', 'ADD V{a}, 0x{b}{c}'),
+
     Instruction('0x8{a}{b}0', 'LD V{a}, V{b}'),
     Instruction('0x8{a}{b}1', 'OR V{a}, V{b}'),
     Instruction('0x8{a}{b}2', 'AND V{a}, V{b}'),
     Instruction('0x8{a}{b}3', 'XOR V{a}, V{b}'),
     Instruction('0x8{a}{b}4', 'ADD V{a}, V{b}'),
     Instruction('0x8{a}{b}5', 'SUB V{a}, V{b}'),
-    Instruction('0x8{a}{b}6', 'SHR V{a}, V{b}'),
+    Instruction('0x8{a}06', 'SHR V{a}'),
     Instruction('0x8{a}{b}7', 'SUBN V{a}, V{b}'),
-    Instruction('0x8{a}{b}E', 'SHL V{a}, V{b}'),
+    Instruction('0x8{a}0E', 'SHL V{a}'),
+
     Instruction('0x9{a}{b}0', 'SNE V{a}, V{b}'),
     Instruction('0xA{a}{b}{c}', 'LD I, 0x{a}{b}{c}'),
     Instruction('0xB{a}{b}{c}', 'JP V0, 0x{a}{b}{c}'),
     Instruction('0xC{a}{b}{c}', 'RND V{a}, 0x{b}{c}'),
     Instruction('0xD{a}{b}{c}', 'DRW V{a}, V{b}, 0x{c}'),
+
     Instruction('0xE{a}9E', 'SKP V{a}'),
     Instruction('0xE{a}A1', 'SKNP V{a}'),
+
     Instruction('0xF{a}07', 'LD V{a}, DT'),
     Instruction('0xF{a}0A', 'LD V{a}, K'),
     Instruction('0xF{a}15', 'LD DT, V{a}'),
