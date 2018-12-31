@@ -70,11 +70,15 @@ def assemble(file_in, file_out):
         for line in fin:
             line = Instruction.clean_asm_input(line)
             for i in INSTRUCTIONS_TABLE:
+                processed = False
                 if parse.search(i.asm_exp, line):
+                    processed = True
                     b = i.get_opcode(line)
                     barray.append((b & 0xFF00)>>8)
                     barray.append((b & 0x00FF))
                     break
+            if not processed:
+                print('Parse error: %s' % line)
     with open(file_out, 'wb') as fout:
         fout.write(bytearray(barray))
 
@@ -85,12 +89,16 @@ def disassemble(file_in, file_out):
             k = 0
             while k + 1 < len(barray):
                 opcode = '0x{0:0{1}X}'.format((barray[k] << 8) + barray[k + 1], 4)
+                processed = False
                 for i in INSTRUCTIONS_TABLE:
                     if parse.search(i.opcode_exp, opcode):
                         s = i.get_asm(opcode)
                         fout.write(s)
                         fout.write('\n')
+                        processed = True
                         break
+                if not processed:
+                    print('Parse error: %s' % opcode)
                 k += 2
 
 def print_help(argv):
