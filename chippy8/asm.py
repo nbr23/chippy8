@@ -17,6 +17,7 @@ class Instruction:
         return self.asm_exp.format(**parse.parse(self.opcode_exp, opcode).named)
 
     def clean_asm_input(s):
+        s = s.split(';')[0]
         return ' '.join(s.split()).upper().replace('X', 'x')
 
 
