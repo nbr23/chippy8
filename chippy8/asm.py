@@ -96,12 +96,14 @@ def disassemble(file_in, file_out):
                 for i in INSTRUCTIONS_TABLE:
                     if parse.search(i.opcode_exp, opcode):
                         s = i.get_asm(opcode)
-                        fout.write(s)
-                        fout.write('\n')
+                        if k % 8 == 0:
+                            fout.write('%s ; %s\n' % (s, hex(0x200 + k)))
+                        else:
+                            fout.write('%s\n' % s)
                         processed = True
                         break
                 if not processed:
-                    fout.write(';%s: invalid instruction\n' % opcode)
+                    fout.write(';%s: invalid instruction (@%s)\n' % (opcode, hex(0x200 + k)))
                     print('Parse error: %s' % opcode)
                 k += 2
 
