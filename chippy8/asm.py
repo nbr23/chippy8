@@ -101,6 +101,7 @@ def disassemble(file_in, file_out):
                         processed = True
                         break
                 if not processed:
+                    fout.write(';%s: invalid instruction\n' % opcode)
                     print('Parse error: %s' % opcode)
                 k += 2
 
