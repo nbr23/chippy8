@@ -70,6 +70,8 @@ def assemble(file_in, file_out):
     with open(file_in) as fin:
         for line in fin:
             line = Instruction.clean_asm_input(line)
+            if line == '':
+                continue
             for i in INSTRUCTIONS_TABLE:
                 processed = False
                 if parse.search(i.asm_exp, line):
