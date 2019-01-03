@@ -18,7 +18,7 @@ class Instruction:
 
     def clean_asm_input(s):
         s = s.split(';')[0]
-        return ' '.join(s.split()).upper().replace('X', 'x')
+        return ' '.join(s.split()).upper().replace('0X', '0x')
 
 
 INSTRUCTIONS_TABLE = {
@@ -64,24 +64,38 @@ INSTRUCTIONS_TABLE = {
     Instruction('0xF{a}65', 'LD V{a}, [I]'),
 }
 
+# returns the opcode for an asm line
+def lookup_opcode(asm_line):
+    for i in INSTRUCTIONS_TABLE:
+        if parse.search(i.asm_exp, asm_line) \
+                and asm_line.split()[0] == i.asm_exp.split()[0]:
+            return i.get_opcode(asm_line)
+    return None
+
+# returns the asm for an opcode
+def lookup_asm(opcode):
+    opcode = '0x{0:0{1}X}'.format(opcode, 4)
+    for i in INSTRUCTIONS_TABLE:
+        if parse.search(i.opcode_exp, opcode):
+            s = i.get_asm(opcode)
+            return i.get_asm(opcode)
+    return None
 
 def assemble(file_in, file_out):
     barray = []
+    k = 0
     with open(file_in) as fin:
         for line in fin:
             line = Instruction.clean_asm_input(line)
             if line == '':
                 continue
-            for i in INSTRUCTIONS_TABLE:
-                processed = False
-                if parse.search(i.asm_exp, line):
-                    processed = True
-                    b = i.get_opcode(line)
-                    barray.append((b & 0xFF00)>>8)
-                    barray.append((b & 0x00FF))
-                    break
-            if not processed:
+            b = lookup_opcode(line)
+            if b is not None:
+                barray.append((b & 0xFF00)>>8)
+                barray.append((b & 0x00FF))
+            else:
                 print('Parse error: %s' % line)
+            k += 1
     with open(file_out, 'wb') as fout:
         fout.write(bytearray(barray))
 
@@ -91,19 +105,15 @@ def disassemble(file_in, file_out):
             barray = bytearray(fin.read())
             k = 0
             while k + 1 < len(barray):
-                opcode = '0x{0:0{1}X}'.format((barray[k] << 8) + barray[k + 1], 4)
-                processed = False
-                for i in INSTRUCTIONS_TABLE:
-                    if parse.search(i.opcode_exp, opcode):
-                        s = i.get_asm(opcode)
-                        if k % 8 == 0:
-                            fout.write('%s ; %s\n' % (s, hex(0x200 + k)))
-                        else:
-                            fout.write('%s\n' % s)
-                        processed = True
-                        break
-                if not processed:
-                    fout.write(';%s: invalid instruction (@%s)\n' % (opcode, hex(0x200 + k)))
+                asm_str = lookup_asm((barray[k] << 8) + barray[k + 1])
+                if asm_str is not None:
+                    if k % 8 == 0:
+                        fout.write('%s ; %s\n' % (asm_str, hex(0x200 + k)))
+                    else:
+                        fout.write('%s\n' % asm_str)
+                else:
+                    fout.write(';%s: invalid instruction (@%s)\n'
+                            % (opcode, hex(0x200 + k)))
                     print('Parse error: %s' % opcode)
                 k += 2
 
