@@ -41,8 +41,10 @@ INSTRUCTIONS_TABLE = {
     Instruction('0x8{a}{b}4', 'ADD V{a}, V{b}'),
     Instruction('0x8{a}{b}5', 'SUB V{a}, V{b}'),
     Instruction('0x8{a}06', 'SHR V{a}'),
+    Instruction('0x8{a}{b}6', 'SHR V{a}, V{b}'),
     Instruction('0x8{a}{b}7', 'SUBN V{a}, V{b}'),
     Instruction('0x8{a}0E', 'SHL V{a}'),
+    Instruction('0x8{a}{b}E', 'SHL V{a}, V{b}'),
 
     Instruction('0x9{a}{b}0', 'SNE V{a}, V{b}'),
     Instruction('0xA{a}{b}{c}', 'LD I, 0x{a}{b}{c}'),
