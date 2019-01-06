@@ -107,7 +107,8 @@ def disassemble(file_in, file_out):
             barray = bytearray(fin.read())
             k = 0
             while k + 1 < len(barray):
-                asm_str = lookup_asm((barray[k] << 8) + barray[k + 1])
+                opcode = (barray[k] << 8) + barray[k + 1]
+                asm_str = lookup_asm(opcode)
                 if asm_str is not None:
                     if k % 8 == 0:
                         fout.write('%s ; %s\n' % (asm_str, hex(0x200 + k)))
@@ -115,8 +116,8 @@ def disassemble(file_in, file_out):
                         fout.write('%s\n' % asm_str)
                 else:
                     fout.write(';%s: invalid instruction (@%s)\n'
-                            % (opcode, hex(0x200 + k)))
-                    print('Parse error: %s' % opcode)
+                            % (hex(opcode), hex(0x200 + k)))
+                    print('Parse error: %s' % hex(opcode))
                 k += 2
 
 def print_help(argv):
