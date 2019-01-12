@@ -70,7 +70,8 @@ INSTRUCTIONS_TABLE = {
 def lookup_opcode(asm_line):
     for i in INSTRUCTIONS_TABLE:
         if parse.search(i.asm_exp, asm_line) \
-                and asm_line.split()[0] == i.asm_exp.split()[0]:
+                and asm_line.split()[0] == i.asm_exp.split()[0] \
+                and len(asm_line.split()) == len(i.asm_exp.split()):
             return i.get_opcode(asm_line)
     return None
 
