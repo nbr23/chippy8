@@ -10,11 +10,13 @@ class Instruction:
 
     # Returns the machine binary for the ASM input
     def get_opcode(self, asm):
-        return int(self.opcode_exp.format(**parse.parse(self.asm_exp, asm).named), 16)
+        return int(self.opcode_exp.format(**parse.parse(self.asm_exp,
+                                                        asm).named), 16)
 
     # Returns the human readable ASM string for the instruction
     def get_asm(self, opcode):
-        return self.asm_exp.format(**parse.parse(self.opcode_exp, opcode).named)
+        return self.asm_exp.format(**parse.parse(self.opcode_exp,
+                                                 opcode).named)
 
     def clean_asm_input(s):
         s = s.split(';')[0]
@@ -112,12 +114,13 @@ def disassemble(file_in, file_out):
                 asm_str = lookup_asm(opcode)
                 if asm_str is not None:
                     if k % 8 == 0:
-                        fout.write('%s ; %s\n' % (asm_str, hex(0x200 + k)))
+                        fout.write('%s ; %s\n' % (asm_str,
+                            hex(program_start + k)))
                     else:
                         fout.write('%s\n' % asm_str)
                 else:
                     fout.write(';%s: invalid instruction (@%s)\n'
-                            % (hex(opcode), hex(0x200 + k)))
+                            % (hex(opcode), hex(program_start + k)))
                     print('Parse error: %s' % hex(opcode))
                 k += 2
 
