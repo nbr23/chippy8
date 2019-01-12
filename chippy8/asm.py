@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import parse
+import argparse
 import sys
 
 class Instruction:
@@ -104,7 +105,7 @@ def assemble(file_in, file_out):
     with open(file_out, 'wb') as fout:
         fout.write(bytearray(barray))
 
-def disassemble(file_in, file_out):
+def disassemble(file_in, file_out, program_start=0x200):
     with open(file_in, 'rb') as fin:
         with open(file_out, 'w') as fout:
             barray = bytearray(fin.read())
@@ -129,15 +130,24 @@ def print_help(argv):
     print('\t%s -d file_in file_out.c8\t# Disassemble' % argv[0])
 
 def main():
-    if len(sys.argv) <= 3:
-        print_help(sys.argv)
-        return 1
-    if sys.argv[1] == '-d':
-        disassemble(sys.argv[2], sys.argv[3])
-    elif sys.argv[1] == '-a':
-        assemble(sys.argv[2], sys.argv[3])
+    argp = argparse.ArgumentParser(description='Chip8 Assembler/Disassembler')
+    argp.add_argument("-i", "--input", required=True, help="Input file")
+    argp.add_argument("-o", "--output", required=True, help="Output file")
+    argp.add_argument("-d", "--disassemble",
+            action="store_true", help="Disassemble input to output")
+    argp.add_argument("-a", "--assemble",
+            action="store_true", help="Assemble input to output")
+    argp.add_argument("-p", "--program_start", default='0x200',
+            help="Set customer program start address (default 0x200). \
+                    Ignored with --assemble")
+    args = argp.parse_args()
+
+    if args.disassemble and not args.assemble:
+        disassemble(args.input, args.output, int(args.program_start, 16))
+    elif args.assemble:
+        assemble(args.input, args.output)
     else:
-        print_help(sys.argv)
+        args.print_help()
 
 if __name__ == "__main__":
     sys.exit(main())
