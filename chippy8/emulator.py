@@ -432,13 +432,18 @@ class CPU:
                 self.memory[0x200 + i] = b
                 i += 1
 
-    def debug_handle_input(self):
-        if self.ui.stdscr.getch() == ord(' '):
+    def debug_handle_input(self, breakpoint):
+        if self.ui.stdscr.getch() == ord(' ') or breakpoint:
+            while self.ui.stdscr.getch() == ord(' '):
+                pass
             while True:
-                if self.ui.stdscr.getch() == ord('c'):
-                    break
+                key = self.ui.stdscr.getch()
+                if key == ord('n'):
+                    return True
+                if key  == ord(' '):
+                    return False
 
-    def run(self):
+    def run(self, breakpoint=False):
         while True:
             self.opcode = self.memory[self.PC & 0xFFF] << 8 \
                     | self.memory[(self.PC + 1) & 0xFFF]
@@ -447,7 +452,7 @@ class CPU:
             self.LOOKUP_TABLE[self.opcode & 0xF000]()
 
             if self.debug:
-                self.debug_handle_input()
+                breakpoint = self.debug_handle_input(breakpoint)
                 self.ui.debug_show_registers(self)
                 asm_str = asm.lookup_asm(self.opcode)
                 if asm_str:
@@ -463,11 +468,11 @@ class CPU:
                 self.tick()
                 self.last_tick = now
 
-def main(stdscr, rom_path, debug, frequency):
+def main(stdscr, rom_path, debug, frequency, breakpoint):
     ui = UI(stdscr, debug=debug)
     cpu = CPU(ui, debug=debug, frequency=frequency)
     cpu.load_rom(rom_path)
-    cpu.run()
+    cpu.run(breakpoint)
 
 if __name__ == "__main__":
     argp = argparse.ArgumentParser(description='Chip8 Emulator')
@@ -476,5 +481,7 @@ if __name__ == "__main__":
             action="store_true", help="Enable debug mode")
     argp.add_argument("-f", "--frequency", type=int, default=60,
             help="Set timers frequency (default 60Hz)")
+    argp.add_argument("-b", "--breakpoint",
+            action="store_true", help="Enable breakpoint at start")
     args = argp.parse_args()
-    sys.exit(curses.wrapper(main, args.rom, args.debug, args.frequency))
+    sys.exit(curses.wrapper(main, args.rom, args.debug, args.frequency, args.breakpoint))
