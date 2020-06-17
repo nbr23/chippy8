@@ -126,11 +126,12 @@ def disassemble(file_in, file_out, program_start=0x200):
                 k += 2
 
 def print_help(argv):
-    print('Usage:\n\t%s -a file_in.c8 file_out\t# Assemble' % argv[0])
-    print('\t%s -d file_in file_out.c8\t# Disassemble' % argv[0])
+    print('Usage:\n\tchippy8 asm -a file_in.c8 file_out\t# Assemble')
+    print('\tchippy8 asm -d file_in file_out.c8\t# Disassemble')
 
-def main():
-    argp = argparse.ArgumentParser(description='Chip8 Assembler/Disassembler')
+def main(argv):
+    argp = argparse.ArgumentParser(description='Chip8 Assembler/Disassembler',
+            prog='chippy8 asm')
     argp.add_argument("-i", "--input", required=True, help="Input file")
     argp.add_argument("-o", "--output", required=True, help="Output file")
     argp.add_argument("-d", "--disassemble",
@@ -140,7 +141,7 @@ def main():
     argp.add_argument("-p", "--program_start", default='0x200',
             help="Set customer program start address (default 0x200). \
                     Ignored with --assemble")
-    args = argp.parse_args()
+    args = argp.parse_args(argv)
 
     if args.disassemble and not args.assemble:
         disassemble(args.input, args.output, int(args.program_start, 16))
@@ -148,6 +149,3 @@ def main():
         assemble(args.input, args.output)
     else:
         args.print_help()
-
-if __name__ == "__main__":
-    sys.exit(main())

@@ -4,7 +4,7 @@ import random
 import curses
 import sys
 import time
-import asm
+import chippy8.asm as asm
 import argparse
 
 class UI:
@@ -468,14 +468,15 @@ class CPU:
                 self.tick()
                 self.last_tick = now
 
-def main(stdscr, rom_path, debug, frequency, breakpoint):
+def emulator_start(stdscr, rom_path, debug, frequency, breakpoint):
     ui = UI(stdscr, debug=debug)
     cpu = CPU(ui, debug=debug, frequency=frequency)
     cpu.load_rom(rom_path)
     cpu.run(breakpoint)
 
-if __name__ == "__main__":
-    argp = argparse.ArgumentParser(description='Chip8 Emulator')
+def main(argv):
+    argp = argparse.ArgumentParser(description='Chip8 Emulator',
+            prog='chippy8 emulator')
     argp.add_argument("-r", "--rom", required=True, help="Rom file to load")
     argp.add_argument("-d", "--debug",
             action="store_true", help="Enable debug mode")
@@ -483,5 +484,5 @@ if __name__ == "__main__":
             help="Set timers frequency (default 60Hz)")
     argp.add_argument("-b", "--breakpoint",
             action="store_true", help="Enable breakpoint at start")
-    args = argp.parse_args()
-    sys.exit(curses.wrapper(main, args.rom, args.debug, args.frequency, args.breakpoint))
+    args = argp.parse_args(argv)
+    sys.exit(curses.wrapper(emulator_start, args.rom, args.debug, args.frequency, args.breakpoint))
