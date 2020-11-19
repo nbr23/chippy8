@@ -159,7 +159,7 @@ class CPU:
 
     # 0x0000
     def t0_clear_screen(self):
-        for i in range (0, 0xFF):
+        for i in range (0, 0x100):
             self.memory[0xF00 + i] = 0
 
     def t0_return_sub(self):
