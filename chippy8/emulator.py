@@ -22,7 +22,7 @@ class UI:
             self.debug = self.stdscr.subpad(UI.HEIGHT + 2, 16 + 2, 0,
                     UI.WIDTH * 2 + 2)
             self.debug.border()
-            self.registers = self.stdscr.subpad(18 + 2, 13 + 2, 0,
+            self.registers = self.stdscr.subpad(18 + 4, 13 + 2, 0,
                                             UI.WIDTH * 2 + 2 + 16 + 2)
             self.registers.border()
 
@@ -47,8 +47,10 @@ class UI:
     def debug_show_registers(self, cpu):
         self.registers.addstr(1, 1, 'I = %s' % hex(cpu.I))
         self.registers.addstr(2, 1, 'PC = %s' % hex(cpu.PC))
+        self.registers.addstr(3, 1, 'DT = %s' % hex(cpu.DT))
+        self.registers.addstr(4, 1, 'ST = %s' % hex(cpu.DT))
         for i in range(0, 0x10):
-            self.registers.addstr(3 + i, 1, 'V[%s] = %s' % (hex(i),
+            self.registers.addstr(5 + i, 1, 'V[%s] = %s' % (hex(i),
                 hex(cpu.V[i])))
         self.registers.refresh()
 
