@@ -1,5 +1,3 @@
-#! /usr/bin/python3
-
 import random
 import curses
 import sys
@@ -477,7 +475,7 @@ def emulator_start(stdscr, rom_path, debug, frequency, breakpoint):
 def main(argv):
     argp = argparse.ArgumentParser(description='Chip8 Emulator',
             prog='chippy8 emulator')
-    argp.add_argument("-r", "--rom", required=True, help="Rom file to load")
+    argp.add_argument("rom", help="Rom file to load")
     argp.add_argument("-d", "--debug",
             action="store_true", help="Enable debug mode")
     argp.add_argument("-f", "--frequency", type=int, default=60,

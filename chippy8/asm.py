@@ -1,5 +1,3 @@
-#! /usr/bin/python3
-
 import parse
 import argparse
 import sys
@@ -125,27 +123,22 @@ def disassemble(file_in, file_out, program_start=0x200):
                     print('Parse error: %s' % hex(opcode))
                 k += 2
 
-def print_help(argv):
-    print('Usage:\n\tchippy8 asm -a file_in.c8 file_out\t# Assemble')
-    print('\tchippy8 asm -d file_in file_out.c8\t# Disassemble')
-
 def main(argv):
-    argp = argparse.ArgumentParser(description='Chip8 Assembler/Disassembler',
-            prog='chippy8 asm')
-    argp.add_argument("-i", "--input", required=True, help="Input file")
-    argp.add_argument("-o", "--output", required=True, help="Output file")
-    argp.add_argument("-d", "--disassemble",
-            action="store_true", help="Disassemble input to output")
-    argp.add_argument("-a", "--assemble",
-            action="store_true", help="Assemble input to output")
-    argp.add_argument("-p", "--program_start", default='0x200',
-            help="Set customer program start address (default 0x200). \
-                    Ignored with --assemble")
-    args = argp.parse_args(argv)
-
-    if args.disassemble and not args.assemble:
-        disassemble(args.input, args.output, int(args.program_start, 16))
-    elif args.assemble:
+    mod = argv[0]
+    argv = argv[1:]
+    if mod == 'asm':
+        argp = argparse.ArgumentParser(description='Chip8 Assembler',
+                prog='chippy8 asm')
+        argp.add_argument("input", help="Input file")
+        argp.add_argument("output", help="Output file")
+        args = argp.parse_args(argv)
         assemble(args.input, args.output)
     else:
-        args.print_help()
+        argp = argparse.ArgumentParser(description='Chip8 Disassembler',
+                prog='chippy8 disasm')
+        argp.add_argument("input", help="Input file")
+        argp.add_argument("output", help="Output file")
+        argp.add_argument("-p", "--program_start", default='0x200',
+                help="Set customer program start address (default 0x200).")
+        args = argp.parse_args(argv)
+        disassemble(args.input, args.output, int(args.program_start, 16))
