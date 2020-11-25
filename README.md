@@ -13,6 +13,24 @@ Install the requirements with:
 
 ## Usage
 
+### Demo
+
+To assemble the simple demo program:
+
+`chippy8 asm demo/23.asm demo_23.c8`
+
+To run it:
+
+`chippy8 emulator demo_23.c8`
+
+![Chippy8 emulator demo](docs/regular.gif)
+
+To run it in debug mode:
+
+`chippy emulator -d demo_23.c8`
+
+![Chippy8 emulator debug demo](docs/debug.gif)
+
 ### Chippy8 Assembler
 
 `chippy8 asm PROGRAM.asm BINARY`
@@ -39,5 +57,3 @@ instructions step by step.
 - `-b`: add a breakpoint at the start of the program. Use the `n` key for step
 by step execution. Ignored if not in debug mode (`-d`).
 - `-f FREQ`: specify (approximate) CPU frequency. Defaults to 60Hz
-
-
