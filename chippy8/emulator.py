@@ -426,7 +426,7 @@ class CPU:
 
     def load_rom(self, program_file):
         with open(program_file, 'rb') as fin:
-            barray = bytearray(fin.read())
+            barray = bytearray(fin.read(4096 - 0x200))
             i = 0
             for b in barray:
                 self.memory[0x200 + i] = b
