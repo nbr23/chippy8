@@ -1,6 +1,7 @@
 # Chippy8
 
-Chip8 emulator, assembler, disassembler, with simplistic
+[Chip8](https://en.wikipedia.org/wiki/CHIP-8) emulator, assembler,
+disassembler, with simplistic
 [`curses`](https://docs.python.org/3/library/curses.html) debugging interface.
 
 ## Requirements
