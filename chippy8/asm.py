@@ -85,7 +85,7 @@ def lookup_asm(opcode):
             return i.get_asm(opcode)
     return None
 
-def assemble(file_in, file_out):
+def assemble(file_in, file_out, verbose=False):
     barray = []
     k = 0
     with open(file_in) as fin:
@@ -95,6 +95,8 @@ def assemble(file_in, file_out):
                 continue
             b = lookup_opcode(line)
             if b is not None:
+                if verbose:
+                    print('0x{:04X} ;\t{}'.format(b, line))
                 barray.append((b & 0xFF00)>>8)
                 barray.append((b & 0x00FF))
             else:
@@ -103,7 +105,7 @@ def assemble(file_in, file_out):
     with open(file_out, 'wb') as fout:
         fout.write(bytearray(barray))
 
-def disassemble(file_in, file_out, program_start=0x200):
+def disassemble(file_in, file_out, program_start=0x200, verbose=False):
     with open(file_in, 'rb') as fin:
         with open(file_out, 'w') as fout:
             barray = bytearray(fin.read())
@@ -112,6 +114,8 @@ def disassemble(file_in, file_out, program_start=0x200):
                 opcode = (barray[k] << 8) + barray[k + 1]
                 asm_str = lookup_asm(opcode)
                 if asm_str is not None:
+                    if verbose:
+                        print('0x{:04X} ;\t{}'.format(opcode, asm_str))
                     if k % 8 == 0:
                         fout.write('%s ; %s\n' % (asm_str,
                             hex(program_start + k)))
@@ -131,8 +135,10 @@ def main(argv):
                 prog='chippy8 asm')
         argp.add_argument("input", help="Input file")
         argp.add_argument("output", help="Output file")
+        argp.add_argument("-v", "--verbose", default=False,
+                action="store_true", help="Enable verbose mode")
         args = argp.parse_args(argv)
-        assemble(args.input, args.output)
+        assemble(args.input, args.output, args.verbose)
     else:
         argp = argparse.ArgumentParser(description='Chip8 Disassembler',
                 prog='chippy8 disasm')
@@ -140,5 +146,8 @@ def main(argv):
         argp.add_argument("output", help="Output file")
         argp.add_argument("-p", "--program_start", default='0x200',
                 help="Set customer program start address (default 0x200).")
+        argp.add_argument("-v", "--verbose", default=False,
+                action="store_true", help="Enable verbose mode")
         args = argp.parse_args(argv)
-        disassemble(args.input, args.output, int(args.program_start, 16))
+        disassemble(args.input, args.output, int(args.program_start, 16),
+                args.verbose)
