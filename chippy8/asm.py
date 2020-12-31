@@ -1,8 +1,12 @@
 import parse
 import argparse
 import sys
+import re
 
 class Instruction:
+    LABEL_DECL_PAT = re.compile('^[A-Z][A-Z0-9_]*:')
+    LABEL_CALL_PAT = re.compile('^\$[A-Z][A-Z0-9_]*$')
+
     def __init__(self, opcode_exp, asm_exp):
         self.opcode_exp = opcode_exp
         self.asm_exp = asm_exp
@@ -67,6 +71,32 @@ INSTRUCTIONS_TABLE = {
     Instruction('0xF{a}65', 'LD V{a}, [I]'),
 }
 
+
+def preprocess(file_in):
+    src = []
+    labels = {}
+    i = 0
+    with open(file_in) as fin:
+        for line in fin:
+            line = ' '.join(line.split(';')[0].split()).upper().replace('0X',
+                    '0x')
+            label = Instruction.LABEL_DECL_PAT.match(line)
+            if label:
+                labels[label.group()[:-1]] = 0x200 + i
+            elif len(line) > 0:
+                src.append(line)
+                i += 2
+    return src, labels
+
+
+def label_substitute(line, labels):
+    s = line.split()
+    if (s[0] in ['JP', 'CALL', 'LD', 'SYS'] and
+            Instruction.LABEL_CALL_PAT.match(s[-1])):
+        line = ' '.join(s[0:-1] + ['0x{0:0{1}X}'.format(labels[s[-1][1:]], 3)])
+    return line
+
+
 # returns the opcode for an asm line
 def lookup_opcode(asm_line):
     for i in INSTRUCTIONS_TABLE:
@@ -75,6 +105,7 @@ def lookup_opcode(asm_line):
                 and len(asm_line.split()) == len(i.asm_exp.split()):
             return i.get_opcode(asm_line)
     return None
+
 
 # returns the asm for an opcode
 def lookup_asm(opcode):
@@ -85,25 +116,23 @@ def lookup_asm(opcode):
             return i.get_asm(opcode)
     return None
 
+
 def assemble(file_in, file_out, verbose=False):
     barray = []
-    k = 0
-    with open(file_in) as fin:
-        for line in fin:
-            line = Instruction.clean_asm_input(line)
-            if line == '':
-                continue
-            b = lookup_opcode(line)
-            if b is not None:
-                if verbose:
-                    print('0x{:04X} ;\t{}'.format(b, line))
-                barray.append((b & 0xFF00)>>8)
-                barray.append((b & 0x00FF))
-            else:
-                print('Parse error: %s' % line)
-            k += 1
+    src_in, labels = preprocess(file_in)
+    for line in src_in:
+        line = label_substitute(line, labels)
+        b = lookup_opcode(line)
+        if b is not None:
+            if verbose:
+                print('0x{:04X} ;\t{}'.format(b, line))
+            barray.append((b & 0xFF00)>>8)
+            barray.append((b & 0x00FF))
+        else:
+            print('Parse error: %s' % line)
     with open(file_out, 'wb') as fout:
         fout.write(bytearray(barray))
+
 
 def disassemble(file_in, file_out, program_start=0x200, verbose=False):
     with open(file_in, 'rb') as fin:
@@ -126,6 +155,7 @@ def disassemble(file_in, file_out, program_start=0x200, verbose=False):
                             % (hex(opcode), hex(program_start + k)))
                     print('Parse error: %s' % hex(opcode))
                 k += 2
+
 
 def main(argv):
     mod = argv[0]
