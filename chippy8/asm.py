@@ -1,11 +1,11 @@
 import parse
 import argparse
-import sys
 import re
+
 
 class Instruction:
     LABEL_DECL_PAT = re.compile('^[A-Z][A-Z0-9_]*:')
-    LABEL_CALL_PAT = re.compile('^\$[A-Z][A-Z0-9_]*$')
+    LABEL_CALL_PAT = re.compile('^\\$[A-Z][A-Z0-9_]*$')
 
     def __init__(self, opcode_exp, asm_exp):
         self.opcode_exp = opcode_exp
@@ -78,8 +78,8 @@ def preprocess(file_in):
     i = 0
     with open(file_in) as fin:
         for line in fin:
-            line = ' '.join(line.split(';')[0].split()).upper().replace('0X',
-                    '0x')
+            line = ' '.join(line.split(';')[0].split()).upper()\
+                    .replace('0X', '0x')
             label = Instruction.LABEL_DECL_PAT.match(line)
             if label:
                 labels[label.group()[:-1]] = 0x200 + i
@@ -112,7 +112,6 @@ def lookup_asm(opcode):
     opcode = '0x{0:0{1}X}'.format(opcode, 4)
     for i in INSTRUCTIONS_TABLE:
         if parse.search(i.opcode_exp, opcode):
-            s = i.get_asm(opcode)
             return i.get_asm(opcode)
     return None
 
@@ -126,7 +125,7 @@ def assemble(file_in, file_out, verbose=False):
         if b is not None:
             if verbose:
                 print('0x{:04X} ;\t{}'.format(b, line))
-            barray.append((b & 0xFF00)>>8)
+            barray.append((b & 0xFF00) >> 8)
             barray.append((b & 0x00FF))
         else:
             print('Parse error: %s' % line)
