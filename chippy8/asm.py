@@ -25,50 +25,49 @@ class Instruction:
         s = s.split(';')[0]
         return ' '.join(s.split()).upper().replace('0X', '0x')
 
-
 INSTRUCTIONS_TABLE = {
-    Instruction('0x00E0', 'CLS'),
-    Instruction('0x00EE', 'RET'),
-    Instruction('0x0{a}{b}{c}', 'SYS 0x{a}{b}{c}'),
+        0x00E0: Instruction('0x00E0', 'CLS'),
+        0x00EE: Instruction('0x00EE', 'RET'),
+        0x0FFF: Instruction('0x0{a}{b}{c}', 'SYS 0x{a}{b}{c}'),
 
-    Instruction('0x1{a}{b}{c}', 'JP 0x{a}{b}{c}'),
-    Instruction('0x2{a}{b}{c}', 'CALL 0x{a}{b}{c}'),
-    Instruction('0x3{a}{b}{c}', 'SE V{a}, 0x{b}{c}'),
-    Instruction('0x4{a}{b}{c}', 'SNE V{a}, 0x{b}{c}'),
-    Instruction('0x5{a}{b}0', 'SE V{a}, V{b}'),
-    Instruction('0x6{a}{b}{c}', 'LD V{a}, 0x{b}{c}'),
-    Instruction('0x7{a}{b}{c}', 'ADD V{a}, 0x{b}{c}'),
+        0x1FFF: Instruction('0x1{a}{b}{c}', 'JP 0x{a}{b}{c}'),
+        0x2FFF: Instruction('0x2{a}{b}{c}', 'CALL 0x{a}{b}{c}'),
+        0x3FFF: Instruction('0x3{a}{b}{c}', 'SE V{a}, 0x{b}{c}'),
+        0x4FFF: Instruction('0x4{a}{b}{c}', 'SNE V{a}, 0x{b}{c}'),
+        0x5FF0: Instruction('0x5{a}{b}0', 'SE V{a}, V{b}'),
+        0x6FFF: Instruction('0x6{a}{b}{c}', 'LD V{a}, 0x{b}{c}'),
+        0x7FFF: Instruction('0x7{a}{b}{c}', 'ADD V{a}, 0x{b}{c}'),
 
-    Instruction('0x8{a}{b}0', 'LD V{a}, V{b}'),
-    Instruction('0x8{a}{b}1', 'OR V{a}, V{b}'),
-    Instruction('0x8{a}{b}2', 'AND V{a}, V{b}'),
-    Instruction('0x8{a}{b}3', 'XOR V{a}, V{b}'),
-    Instruction('0x8{a}{b}4', 'ADD V{a}, V{b}'),
-    Instruction('0x8{a}{b}5', 'SUB V{a}, V{b}'),
-    Instruction('0x8{a}06', 'SHR V{a}'),
-    Instruction('0x8{a}{b}6', 'SHR V{a}, V{b}'),
-    Instruction('0x8{a}{b}7', 'SUBN V{a}, V{b}'),
-    Instruction('0x8{a}0E', 'SHL V{a}'),
-    Instruction('0x8{a}{b}E', 'SHL V{a}, V{b}'),
+        0x8FF0: Instruction('0x8{a}{b}0', 'LD V{a}, V{b}'),
+        0x8FF1: Instruction('0x8{a}{b}1', 'OR V{a}, V{b}'),
+        0x8FF2: Instruction('0x8{a}{b}2', 'AND V{a}, V{b}'),
+        0x8FF3: Instruction('0x8{a}{b}3', 'XOR V{a}, V{b}'),
+        0x8FF4: Instruction('0x8{a}{b}4', 'ADD V{a}, V{b}'),
+        0x8FF5: Instruction('0x8{a}{b}5', 'SUB V{a}, V{b}'),
+        0x8F06: Instruction('0x8{a}06', 'SHR V{a}'),
+        0x8FF6: Instruction('0x8{a}{b}6', 'SHR V{a}, V{b}'),
+        0x8FF7: Instruction('0x8{a}{b}7', 'SUBN V{a}, V{b}'),
+        0x8F0E: Instruction('0x8{a}0E', 'SHL V{a}'),
+        0x8FFE: Instruction('0x8{a}{b}E', 'SHL V{a}, V{b}'),
 
-    Instruction('0x9{a}{b}0', 'SNE V{a}, V{b}'),
-    Instruction('0xA{a}{b}{c}', 'LD I, 0x{a}{b}{c}'),
-    Instruction('0xB{a}{b}{c}', 'JP V0, 0x{a}{b}{c}'),
-    Instruction('0xC{a}{b}{c}', 'RND V{a}, 0x{b}{c}'),
-    Instruction('0xD{a}{b}{c}', 'DRW V{a}, V{b}, 0x{c}'),
+        0x9FF0: Instruction('0x9{a}{b}0', 'SNE V{a}, V{b}'),
+        0xAFFF: Instruction('0xA{a}{b}{c}', 'LD I, 0x{a}{b}{c}'),
+        0xBFFF: Instruction('0xB{a}{b}{c}', 'JP V0, 0x{a}{b}{c}'),
+        0xCFFF: Instruction('0xC{a}{b}{c}', 'RND V{a}, 0x{b}{c}'),
+        0xDFFF: Instruction('0xD{a}{b}{c}', 'DRW V{a}, V{b}, 0x{c}'),
 
-    Instruction('0xE{a}9E', 'SKP V{a}'),
-    Instruction('0xE{a}A1', 'SKNP V{a}'),
+        0xEF9E: Instruction('0xE{a}9E', 'SKP V{a}'),
+        0xEFA1: Instruction('0xE{a}A1', 'SKNP V{a}'),
 
-    Instruction('0xF{a}07', 'LD V{a}, DT'),
-    Instruction('0xF{a}0A', 'LD V{a}, K'),
-    Instruction('0xF{a}15', 'LD DT, V{a}'),
-    Instruction('0xF{a}18', 'LD ST, V{a}'),
-    Instruction('0xF{a}1E', 'ADD I, V{a}'),
-    Instruction('0xF{a}29', 'LD F, V{a}'),
-    Instruction('0xF{a}33', 'LD B, V{a}'),
-    Instruction('0xF{a}55', 'LD [I], V{a}'),
-    Instruction('0xF{a}65', 'LD V{a}, [I]'),
+        0xFF07: Instruction('0xF{a}07', 'LD V{a}, DT'),
+        0xFF0A: Instruction('0xF{a}0A', 'LD V{a}, K'),
+        0xFF15: Instruction('0xF{a}15', 'LD DT, V{a}'),
+        0xFF18: Instruction('0xF{a}18', 'LD ST, V{a}'),
+        0xFF1E: Instruction('0xF{a}1E', 'ADD I, V{a}'),
+        0xFF29: Instruction('0xF{a}29', 'LD F, V{a}'),
+        0xFF33: Instruction('0xF{a}33', 'LD B, V{a}'),
+        0xFF55: Instruction('0xF{a}55', 'LD [I], V{a}'),
+        0xFF65: Instruction('0xF{a}65', 'LD V{a}, [I]'),
 }
 
 
@@ -99,7 +98,7 @@ def label_substitute(line, labels):
 
 # returns the opcode for an asm line
 def lookup_opcode(asm_line):
-    for i in INSTRUCTIONS_TABLE:
+    for i in INSTRUCTIONS_TABLE.values():
         if parse.search(i.asm_exp, asm_line) \
                 and asm_line.split()[0] == i.asm_exp.split()[0] \
                 and len(asm_line.split()) == len(i.asm_exp.split()):
@@ -109,10 +108,10 @@ def lookup_opcode(asm_line):
 
 # returns the asm for an opcode
 def lookup_asm(opcode):
-    opcode = '0x{0:0{1}X}'.format(opcode, 4)
+    opcode_str = '0x{0:0{1}X}'.format(opcode, 4)
     for i in INSTRUCTIONS_TABLE:
-        if parse.search(i.opcode_exp, opcode):
-            return i.get_asm(opcode)
+        if (i & opcode) == opcode:
+            return INSTRUCTIONS_TABLE[i].get_asm(opcode_str)
     return None
 
 
